@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<style type="text/css">
+			body {
+				font-family: georgia;
+			}
+			table {
+				font-family: monospace;
+				border-collapse: collapse;
+			}
+			th, td {
+				text-align: left;
+				padding: 8px;
+				border: 1px solid black;
+			}
+			button {
+				margin: 10px;
+				font-family: monospace;
+			}
+		</style>
+		<script src="jatos.js"></script>
+		<script src="shared-fns.js"></script>
+		<script src="admin.js"></script>
+	</head>
+	<body>
+		<h1>Admin page</h1>
+		<button id='begin-writing-button' disabled onclick="set_expt_phase('writing')">Begin writing</button><br>
+		<button id='begin-rating-button' disabled onclick="set_expt_phase('rating')">Begin rating</button><br>
+		<p id='admin-info'></p>
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Writing progress</th>
+					<th>Rating progress</th>
+				</tr>
+			</thead>
+			<tbody id='info-table-body'>
+			</tbody>
+		</table>
+	</body>
+</html>
+
+	
