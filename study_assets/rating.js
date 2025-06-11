@@ -10,7 +10,7 @@ var jsPsych = initJsPsych({
 
 jatos.onLoad(function() {
     id = jatos.urlQueryParameters['id'];
-    jsPsych.data.addProperties({id: id, expt_phase: get_expt_phase()});
+    jsPsych.data.addProperties({batch: jatos.batchProperties.title, id: id, expt_phase: get_expt_phase()});
     var narratives = get_narratives();
     var rating_task = create_rating_task(narratives);
     jsPsych.run(rating_task);
@@ -38,7 +38,12 @@ function create_rating_task(narratives) {
 	var ni; // narrative idx
 	for (ni = 0; ni < narratives.length; ni++) {
 		// get default survey_json
-		var ratings = JSON.parse(JSON.stringify(jatos.studyJsonInput['ratings'])); // deep copy
+		// by default, use studyJsonInput
+		var ratings_json = jatos.studyJsonInput['ratings'];
+		if (jatos.batchJsonInput['ratings']) {
+			ratings_json = jatos.batchJsonInput['ratings'];
+		}
+		var ratings = JSON.parse(JSON.stringify(ratings_json)); // deep copy
 		var ri; // rating idx
 		for (ri = 0; ri < ratings.length; ri++) {
 			// determine default params
