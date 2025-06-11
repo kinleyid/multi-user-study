@@ -6,7 +6,7 @@ from tkinter import filedialog
 if len(sys.argv) < 2:
     root = tk.Tk()
     root.withdraw()
-    data_path = filedialog.askopenfilename(title='Select data to parse')
+    data_path = filedialog.askopenfilename(title='Select data (.zip file) to parse')
     if data_path == '':
         sys.exit('No data file selected')
 else:
