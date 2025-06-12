@@ -17,11 +17,17 @@ function update() {
 
 jatos.onLoad(function() {
     var id = jatos.urlQueryParameters['id'];
-    if (id == 'admin') {
-    	jatos.startComponentByTitle('admin');
+    if (id) {
+	    if (id == 'admin') {
+	    	jatos.startComponentByTitle('admin');
+	    } else {
+	    	update_batch_data_retry(id, null);
+	    	// await update
+	    	jatos.onBatchSession(update);
+	    }
     } else {
-    	update_batch_data_retry(id, null);
-    	// await update
-    	jatos.onBatchSession(update);
+    	// No ID
+		var info = document.getElementById('info');
+		info.innerText = 'No ID URL parameter! Make sure to add "id=<id>" to the end of the link.'
     }
 });

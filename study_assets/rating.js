@@ -47,26 +47,25 @@ function create_rating_task(narratives) {
 		var ri; // rating idx
 		for (ri = 0; ri < ratings.length; ri++) {
 			// determine default params
-			var preamble_template = 'Consider the following:<br><br><span style="border: 1px solid black; padding: 5px">%NARR%</span><br><br>'
 			var default_params;
 			if (ratings[ri]['type'] == 'vas') {
 				trial_type = jsPsychHtmlVasResponse;
 				default_params = {
 					'type': jsPsychHtmlVasResponse,
-					'stimulus': preamble_template,
-					'prompt': 'Do you agree?<br>',
-					'labels': ['Strongly disagree', 'Strongly agree'],
+					'stimulus': '[placeholder preamble]',
+					'prompt': '[placeholder prompt]<br>',
+					'labels': ['[placeholder label]', '[placeholder label]'],
 					'scale_width': 500
 				}
 			} else if (ratings[ri]['type'] == 'likert') {
 				default_params = {
 					'type': jsPsychSurveyLikert,
-					'preamble': preamble_template,
+					'preamble': '[placeholder preamble]',
 					'scale_width': 500,
 					'questions': [
 						{
-							'prompt': 'Do you agree?',
-							'labels': ['Strongly disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly agree']
+							'prompt': '[placeholer prompt]',
+							'labels': ['[placeholder label]', '[placeholder label]'],
 						}
 					]
 				}
@@ -76,7 +75,7 @@ function create_rating_task(narratives) {
 					'preamble': preamble_template,
 					'questions': [
 						{
-							'prompt': 'Do you agree?'
+							'prompt': '[placeholer prompt]'
 						}
 					]
 				}
@@ -98,7 +97,7 @@ function create_rating_task(narratives) {
 			// add data field to record perspective being rated
 			params['data'] = {
 				'writer': narratives[ni]['writer'],
-				'perspective': narratives[ni]['perspective']
+				'perspective_prompt': narratives[ni]['perspective_prompt']
 			}
 			// add functions to update batch data
 			params['on_start'] = send_update_from_ptpt;

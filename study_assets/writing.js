@@ -10,33 +10,37 @@ var jsPsych = initJsPsych({
 
 jatos.onLoad(function() {
     id = jatos.urlQueryParameters['id'];
+    // Record all URL parameters.
     jsPsych.data.addProperties({batch: jatos.batchProperties.title, id: id, expt_phase: get_expt_phase()});
-    // Get perspectives---default to study-wise, overwrite with batch-wise
-    var perspectives = jatos.studyJsonInput['perspectives'];
-    if (jatos.batchJsonInput['perspectives']) {
-    	perspectives = jatos.batchJsonInput['perspectives'];
+    // Get perspective_prompts---default to study-wise, overwrite with batch-wise
+    var perspective_prompts = jatos.studyJsonInput['perspective_prompts'];
+    if (jatos.batchJsonInput['perspective_prompts']) {
+    	perspective_prompts = jatos.batchJsonInput['perspective_prompts'];
     }
-    var writing_task = create_writing_task(perspectives);
+    var writing_task = create_writing_task(perspective_prompts);
     jsPsych.run(writing_task);
 });
 
-function create_writing_task(perspectives) {
+function create_writing_task(perspective_prompts) {
 	// create nested timeline (see https://www.jspsych.org/v7/overview/timeline/#nested-timelines)
 	var timeline = [];
 	var i;
-	for (i = 0; i < perspectives.length; i++) {
+	for (i = 0; i < perspective_prompts.length; i++) {
 		// create trial object
 		var writing_trial = {
 	    type: jsPsychSurveyText,
 			questions: [{
-				prompt: perspectives[i],
+				prompt: perspective_prompts[i],
 				rows: jatos.studyJsonInput['n_lines'] || jatos.batchJsonInput['n_lines'] || 5
 			}],
-			data: {perspective: perspectives[i]},
+			data: {perspective_prompt: perspective_prompts[i]},
 			on_start: send_update_from_ptpt,
 	    on_finish: send_update_from_ptpt,
 	    on_load: function() { // implement word limit
-	    	var max_words = jatos.studyJsonInput['max_words'] || jatos.batchJsonInput['max_words'];
+	    	var max_words = jatos.studyJsonInput['max_words']
+	    	if (jatos.batchJsonInput['max_words']) {
+	    		max_words = jatos.batchJsonInput['max_words'];
+	    	}
 	    	if (max_words) {
 	    		var input_area = document.getElementById('input-0');
 	    		var prev_text = input_area.value;
@@ -72,20 +76,20 @@ function create_writing_task(perspectives) {
 	    }
 		}
 		// Create rating---default to studyJsonInput but overwrite if applicable with batchJsonInput
-		var post_writing = jatos.studyJsonInput['post_writing'];
-		if (jatos.batchJsonInput['post_writing']) {
-			post_writing = jatos.batchJsonInput['post_writing'];
+		var post_writing_question = jatos.studyJsonInput['post_writing_question'];
+		if (jatos.batchJsonInput['post_writing_question']) {
+			post_writing_question = jatos.batchJsonInput['post_writing_question'];
 		}
 		var rating_trial = {};
 		// Set type
 		rating_trial.type = {
 			'vas': jsPsychHtmlVasResponse,
 			'likert': jsPsychSurveyLikert
-		}[post_writing.type];
+		}[post_writing_question.type];
 		// Use user-defined params
 		var k;
-		for (k in post_writing.params) {
-			rating_trial[k] = post_writing.params[k];
+		for (k in post_writing_question.params) {
+			rating_trial[k] = post_writing_question.params[k];
 		}
 		/*
 		var rating = {

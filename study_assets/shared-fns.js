@@ -52,11 +52,13 @@ function parse_narrative_data(data) {
 	var i, trial;
 	for (i = 0; i < trials.length; i++) {
 		trial = trials[i];
-		parsed.push({
-			'writer': trial['id'],
-			'perspective': trial['perspective'],
-			'txt': trial.response['Q0']
-		})
+		if (trial['trial_type'] == 'survey-text') { // Identify actual writing trials vs ratings
+			parsed.push({
+				'writer': trial['id'],
+				'perspective': trial['perspective'],
+				'txt': trial.response['Q0']
+			});
+		}
 	}
 	return parsed;
 }
