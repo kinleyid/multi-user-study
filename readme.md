@@ -97,7 +97,7 @@ For example, the study input might be the following:
     {
       "type": "vas",
       "params": {
-        "preamble": "Consider the following narrative:<br><br><span style="border: 1px solid black; padding: 5px">%NARR%</span><br><br>Do you agree with this?",
+        "preamble": "Consider the following narrative:<br><br><span style=\"border: 1px solid black; padding: 5px\">%NARR%</span><br><br>Do you agree with this?",
         "scale_width": 500,
         "labels": [
           "Not at all",
@@ -109,7 +109,7 @@ For example, the study input might be the following:
     {
       "type": "likert",
       "params": {
-      	"preamble": "Consider the following narrative:<br><br><span style="border: 1px solid black; padding: 5px">%NARR%</span><br><br>",
+      	"preamble": "Consider the following narrative:<br><br><span style=\"border: 1px solid black; padding: 5px\">%NARR%</span><br><br>",
         "questions": [
           {
             "prompt": "Do you agree with this?",
@@ -122,7 +122,7 @@ For example, the study input might be the following:
             ]
           },
           {
-          	"prompt": "Do you think this was written by someone who genuinely believes it?"
+          	"prompt": "Do you think this was written by someone who genuinely believes it?",
           	"labels": [
           	  "No",
           	  "Yes"
