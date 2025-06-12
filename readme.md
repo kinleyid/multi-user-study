@@ -70,8 +70,8 @@ For example, the study input might be the following:
 ```
 {
   "perspective_prompts": [
-    "How would a consequentialist respond to the trolley problem?"
-    "How would a deontologist respond to the trolley problem?",
+    "How would a consequentialist respond to the trolley problem?",
+    "How would a deontologist respond to the trolley problem?"
   ],
   "n_lines": 5,
   "max_words": 300,
