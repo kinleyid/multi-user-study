@@ -76,12 +76,13 @@ For example, the study input might be the following:
   "n_lines": 5,
   "max_words": 300,
   "post_writing_question": {
-  	"type": "likert",
+    "type": "likert",
     "params": {
       "preamble": "My text accurately reflects the position of a person who holds this perspective",
       "scale_width": 500,
       "questions": [
         {
+          "prompt": "Do you agree?",
           "labels": [
             "Strongly disagree",
             "Disagree",
@@ -109,7 +110,7 @@ For example, the study input might be the following:
     {
       "type": "likert",
       "params": {
-      	"preamble": "Consider the following narrative:<br><br><span style=\"border: 1px solid black; padding: 5px\">%NARR%</span><br><br>",
+        "preamble": "Consider the following narrative:<br><br><span style=\"border: 1px solid black; padding: 5px\">%NARR%</span><br><br>",
         "questions": [
           {
             "prompt": "Do you agree with this?",
@@ -122,11 +123,11 @@ For example, the study input might be the following:
             ]
           },
           {
-          	"prompt": "Do you think this was written by someone who genuinely believes it?",
-          	"labels": [
-          	  "No",
-          	  "Yes"
-          	]
+            "prompt": "Do you think this was written by someone who genuinely believes it?",
+            "labels": [
+              "No",
+              "Yes"
+            ]
           }
         ]
       }
@@ -145,7 +146,6 @@ For example, the study input might be the following:
   ]
 }
 ```
-
 You can set the "batch input" to the above and experiment with it to get a sense of how it works.
 
 ## Starting the experiment
