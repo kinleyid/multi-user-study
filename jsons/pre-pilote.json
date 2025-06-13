@@ -1,0 +1,40 @@
+{
+  "perspective_prompts": [
+    "FOR",
+    "AGAINST"
+  ],
+  "n_lines": 5,
+  "max_words": 300,
+  "post_writing_question": {
+    "type": "likert",
+    "params": {
+      "preamble": "My text accurately reflects the position of a person who holds this perspective",
+      "scale_width": 500,
+      "questions": [
+        {
+          "prompt": "",
+          "labels": [
+            "Strongly disagree",
+            "Disagree",
+            "Neutral",
+            "Agree",
+            "Strongly agree"
+          ]
+        }
+      ]
+    }
+  },
+  "ratings": [
+    {
+      "type": "vas",
+      "params": {
+        "preamble": "Consider the following:<br><br><span style=\"border: 1px solid black; padding: 5px\">%NARR%</span><br><br>Do you agree with this?",
+        "scale_width": 500,
+        "labels": [
+          "Strongly disagree",
+          "Strongly agree"
+        ]
+      }
+    }
+  ]
+}
