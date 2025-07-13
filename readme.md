@@ -74,16 +74,29 @@ For example, the study input might be the following:
 
 ```
 {
-  "perspective_prompts": [
-    "How would a consequentialist respond to the trolley problem?",
-    "How would a deontologist respond to the trolley problem?"
+  "perspectives": [
+    "FOR",
+    "AGAINST"
   ],
+  "writing_prompt": "Please write from the <b>%PERS%</b> perspective",
   "n_lines": 5,
-  "max_words": 300,
-  "post_writing_question": {
+  "max_words": 150,
+  "display_wordcount": true,
+  "pre_writing_timeline": {
+    "type": "vas",
+    "params": {
+      "stimulus": "I agree with the <u>%PERS%</u> perspective",
+      "slider_width": 500,
+      "labels": [
+        "Strongly disagree",
+        "Strongly agree"
+      ]
+    }
+  },
+  "post_writing_timeline": {
     "type": "likert",
     "params": {
-      "preamble": "My text accurately reflects the position of a person who holds this perspective",
+      "preamble": "My text accurately reflects the position of a person who holds the <b>%PERS%</b> perspective",
       "scale_width": 500,
       "questions": [
         {
@@ -99,11 +112,11 @@ For example, the study input might be the following:
       ]
     }
   },
-  "ratings": [
+  "rating_timeline": [
     {
       "type": "vas",
       "params": {
-        "preamble": "Consider the following narrative:<br><br><span style=\"border: 1px solid black; padding: 5px\">%NARR%</span><br><br>Do you agree with this?",
+        "stimulus": "<div style='margin-left: 10%; width: 80%'><p>Consider the following <b>%PERS%</b> narrative:</p><p style=\"border: 1px solid black; padding: 5px\">%NARR%</p><p>Do you agree with this?</p></div>",
         "scale_width": 500,
         "labels": [
           "Not at all",
@@ -115,7 +128,8 @@ For example, the study input might be the following:
     {
       "type": "likert",
       "params": {
-        "preamble": "Consider the following narrative:<br><br><span style=\"border: 1px solid black; padding: 5px\">%NARR%</span><br><br>",
+        "preamble": "<div style='margin-left: 10%; width: 80%'><p>Consider the following <b>%PERS%</b> narrative:</p><p style=\"border: 1px solid black; padding: 5px\">%NARR%</p></div>",
+        "scale_width": 500,
         "questions": [
           {
             "prompt": "Do you agree with this?",
@@ -129,6 +143,13 @@ For example, the study input might be the following:
           },
           {
             "prompt": "Do you think this was written by someone who genuinely believes it?",
+            "labels": [
+              "No",
+              "Yes"
+            ]
+          },
+          {
+            "prompt": "Does this cover all the arguments for this perspective?",
             "labels": [
               "No",
               "Yes"
