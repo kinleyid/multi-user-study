@@ -59,11 +59,16 @@ There is more extensive documentation of JSON online.
 
 Whether you are editing the "study input" or "batch input", you can use the same parameters to customize the experiment:
 
-- `perspective_prompts`: An array of text values containing the prompts each participant will be see to write their narratives.
+- `perspectives`: Names of perspectives.
+- `writing_prompt`: A prompt participants will see above the text box. `"%PERS%"` will be replaced with the current perspective.
 - `n_lines`: The number of lines participants see while they are writing their narratives.
 - `max_words`: The maximum number of words allowed in participant narratives.
-- `post_writing_question`: A single question asked after the writing of each narrative (see examples below).
-- `ratings`: A set of questions asked to participants about the narratives of others.
+- `display_wordcount`: Whether two display a running wordcount below the writing area.
+- `pre_writing_timeline`: A set of questions (or just one) that participant see before writing each narrative. `"%PERS%"` will be replaced with the current perspective.
+- `post_writing_timeline`: A set of questions (or just one) that participant see after writing each narrative. `"%PERS%"` will be replaced with the current perspective.
+- `rating_timeline`: A set of questions asked to participants about the narratives of others. `"%PERS%"` will be replaced with the current perspective being rated and `"%NARR%"` will be replaced with the current narrative.
+- `post_writing_message`: A message to display to participants at the end of the writing phase (default "Writing phase finished! Please keep this window open.")
+- `post_rating_message`: A message to display to participants at the end of the rating phase (e.g., "Experiment finished!")
 
 For example, the study input might be the following:
 

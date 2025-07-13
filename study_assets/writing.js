@@ -12,39 +12,50 @@ jatos.onLoad(function() {
     id = jatos.urlQueryParameters['id'];
     // Record all URL parameters.
     jsPsych.data.addProperties({batch: jatos.batchProperties.title, id: id, expt_phase: get_expt_phase()});
-    // Get perspective_prompts---default to study-wise, overwrite with batch-wise
-    var perspective_prompts = jatos.studyJsonInput['perspective_prompts'];
-    if (jatos.batchJsonInput['perspective_prompts']) {
-    	perspective_prompts = jatos.batchJsonInput['perspective_prompts'];
-    }
-    var writing_task = create_writing_task(perspective_prompts);
+    // Get perspectives
+    var perspectives = get_input_param('perspectives');
+    var writing_task = create_writing_task(perspectives);
     jsPsych.run(writing_task);
 });
 
-function create_writing_task(perspective_prompts) {
+function create_writing_task(perspectives) {
 	// create nested timeline (see https://www.jspsych.org/v7/overview/timeline/#nested-timelines)
 	var timeline = [];
 	var i;
-	for (i = 0; i < perspective_prompts.length; i++) {
-		// create trial object
+	for (i = 0; i < perspectives.length; i++) {
+		// Pre-writing question(s)
+		var pre_writing_timeline_input = get_input_param('pre_writing_timeline');
+		console.log(pre_writing_timeline_input)
+		if (pre_writing_timeline_input) {
+			var pre_writing_timeline = jatos_input_to_jspsych_trials(
+				pre_writing_timeline_input,
+				{'%PERS%': perspectives[i]}
+			);
+			timeline = timeline.concat(pre_writing_timeline);
+		}
+		// Actual writing task
 		var writing_trial = {
 	    type: jsPsychSurveyText,
 			questions: [{
-				prompt: perspective_prompts[i],
-				rows: jatos.studyJsonInput['n_lines'] || jatos.batchJsonInput['n_lines'] || 5
+				prompt: get_input_param('writing_prompt').replace('%PERS%', perspectives[i]),
+				rows: get_input_param('n_lines') || 5
 			}],
-			data: {perspective_prompt: perspective_prompts[i]},
+			data: {perspective: perspectives[i]},
 			on_start: send_update_from_ptpt,
 	    on_finish: send_update_from_ptpt,
 	    on_load: function() { // implement word limit
-	    	var max_words = jatos.studyJsonInput['max_words']
-	    	if (jatos.batchJsonInput['max_words']) {
-	    		max_words = jatos.batchJsonInput['max_words'];
-	    	}
+	    	var max_words = get_input_param('max_words');
+	    	var display_wordcount = get_input_param('display_wordcount') || false;
 	    	if (max_words) {
 	    		var input_area = document.getElementById('input-0');
+	    		if (display_wordcount) {
+	    			// Add running word count display
+		    		input_area.insertAdjacentHTML('afterend', '<p>(<span id="word_count">0</span>/%s words)</p>'.replace('%s', max_words));
+	    		}
+	    		// Initialize variables used to track wordcount
 	    		var prev_text = input_area.value;
 	    		var max_words_reached = false;
+	    		// Add function to count words
 		    	input_area.addEventListener('input', function(e) {
 		    		var cand_text = input_area.value; // What writing is as of user's current input
 		    		// Loop over characters
@@ -64,6 +75,7 @@ function create_writing_task(perspective_prompts) {
 		    				if (word_count > max_words) {
 			    				alert('Max. words: ' + max_words);
 			    				e.target.value = prev_text;
+			    				word_count = max_words;
 			    				break;
 			    			} else {
 			    				last_char = 'letter';
@@ -71,39 +83,25 @@ function create_writing_task(perspective_prompts) {
 		    			}
 		    		}
 		    		prev_text = input_area.value;
+		    		if (display_wordcount) {
+		    			var word_count_span = document.getElementById('word_count');
+			    		word_count_span.innerText = word_count;
+		    		}
 		    	});
 	    	}
 	    }
 		}
-		// Create rating---default to studyJsonInput but overwrite if applicable with batchJsonInput
-		var post_writing_question = jatos.studyJsonInput['post_writing_question'];
-		if (jatos.batchJsonInput['post_writing_question']) {
-			post_writing_question = jatos.batchJsonInput['post_writing_question'];
+		timeline.push(writing_trial);
+		// Post-writing question(s)
+		var post_writing_timeline_input = get_input_param('post_writing_timeline');
+		console.log(post_writing_timeline_input)
+		if (post_writing_timeline_input) {
+			var post_writing_timeline = jatos_input_to_jspsych_trials(
+				post_writing_timeline_input,
+				{'%PERS%': perspectives[i]}
+			);
+			timeline = timeline.concat(post_writing_timeline);
 		}
-		var rating_trial = {};
-		// Set type
-		rating_trial.type = {
-			'vas': jsPsychHtmlVasResponse,
-			'likert': jsPsychSurveyLikert
-		}[post_writing_question.type];
-		// Use user-defined params
-		var k;
-		for (k in post_writing_question.params) {
-			rating_trial[k] = post_writing_question.params[k];
-		}
-		/*
-		var rating = {
-			type: jsPsychSurveyLikert,
-			preamble: 'My text accurately reflects the position of a person who holds this perspective',
-			scale_width: 500,
-			questions: [
-				{
-					labels: ['Strongly disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly agree']
-				}
-			]
-		}
-		*/
-		timeline.push(writing_trial, rating_trial);
 	}
 	return timeline;
 }
@@ -111,7 +109,7 @@ function create_writing_task(perspective_prompts) {
 function final_screen() {
 	send_update_from_ptpt();
 	var div = jsPsych.getDisplayElement();
-	div.innerHTML = 'Done! Waiting for next phase to start';
+	div.innerHTML = get_input_param('post_writing_message') || "Writing phase finished! Please keep this window open.";
 	jatos.onBatchSession(possible_next_phase);
 }
 
