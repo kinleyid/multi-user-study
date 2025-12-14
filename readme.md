@@ -24,7 +24,7 @@ Note that you can use this ID parameter to encode other information---for exampl
 1. `https://jatos.mindprobe.eu/publix/a1b2c3d4e5?id=P001_1`
 2. `https://jatos.mindprobe.eu/publix/a1b2c3d4e5?id=P001_2`
 
-### Customizing the experiment
+## Customizing the experiment
 
 To customize aspects of the experiment such as the questions that will be displayed, the rating scales, etc., you can customize the "input" to the study (which will affect all batches) or the "input" to a single batch (which will affect only that batch). The "input" to the study can be found by:
 
@@ -47,6 +47,7 @@ The "study input" and "batch input" are both fields where you can enter JSON tex
 {
 	"<name_of_text_param>": "<value_of_text_param>",
 	"<name_of_numeric_param>": 999,
+  "<name_of_boolean_param>": true,
 	"<name_of_array_of_params>": ["<value_1>", "<value_2>", "<value_3>"],
 	"<name_of_nested_structure>": {
 		"<name_of_text_param>": "<value_of_text_param>",
@@ -57,18 +58,37 @@ The "study input" and "batch input" are both fields where you can enter JSON tex
 
 There is more extensive documentation of JSON online.
 
+### Parameters
+
 Whether you are editing the "study input" or "batch input", you can use the same parameters to customize the experiment:
 
-- `perspectives`: Names of perspectives.
-- `writing_prompt`: A prompt participants will see above the text box. `"%PERS%"` will be replaced with the current perspective.
-- `n_lines`: The number of lines participants see while they are writing their narratives.
+#### General parameters
+
+- `perspectives`: Names of the perspectives.
+- `query_participant_perspective`: Ask an initial question prior to the writing task querying which perspective each participant agrees with. This is necessary if `rating_allocation_mode` is set to `'opponents'` (see below). Options are `true` or `false`
+- `query_participant_perspective_text`: Text of question querying each participant's perspective. Defaults to `"Which perspective do you agree with?"`.
+
+#### Writing phase parameters
+
+- `display_wordcount`: Whether to display a running wordcount below the writing area (`true` or `false`).
 - `max_words`: The maximum number of words allowed in participant narratives.
-- `display_wordcount`: Whether two display a running wordcount below the writing area.
-- `pre_writing_timeline`: A set of questions (or just one) that participant see before writing each narrative. `"%PERS%"` will be replaced with the current perspective.
+- `n_lines`: The number of lines participants see while they are writing their narratives.
 - `post_writing_timeline`: A set of questions (or just one) that participant see after writing each narrative. `"%PERS%"` will be replaced with the current perspective.
-- `rating_timeline`: A set of questions asked to participants about the narratives of others. `"%PERS%"` will be replaced with the current perspective being rated and `"%NARR%"` will be replaced with the current narrative.
 - `post_writing_message`: A message to display to participants at the end of the writing phase (default "Writing phase finished! Please keep this window open.")
+- `pre_writing_timeline`: A set of questions (or just one) that participant see before writing each narrative. `"%PERS%"` will be replaced with the current perspective.
+- `writing_prompt`: A prompt participants will see above the text box. `"%PERS%"` will be replaced with the current perspective.
+
+#### Rating phase parameters
+
 - `post_rating_message`: A message to display to participants at the end of the rating phase (e.g., "Experiment finished!")
+- `rating_allocation_mode`: How narratives will be allocated to raters. Options are:
+    - `'all-others'`: everyone will rate everyone else's narratives
+    - `'opponents'`: everyone will rate the narratives of those who disagree with them; note that to use this option, `query_participant_perspective` must be set to `true`
+    - `'allies'`: everyone will rate the narratives of those who agree with them; note that to use this option, `query_participant_perspective` must be set to `true`
+    - `'all'`: everyone will rate everyone's narratives, *including their own*
+- `rating_timeline`: A set of questions asked to participants about the narratives of others. `"%PERS%"` will be replaced with the current perspective being rated and `"%NARR%"` will be replaced with the current narrative.
+
+### Example
 
 For example, the study input might be the following:
 

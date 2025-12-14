@@ -42,19 +42,19 @@ function set_expt_phase(expt_phase) {
     
     // set expt_phase variable, which is shared across the batch
     var shared_data = jatos.batchSession.getAll();
-    var admin_json = shared_data['admin'] || "{}"; // admin may be logging on for first time
-    var admin_data = JSON.parse(admin_json);
+    var admin_data = shared_data['admin'] || {}; // admin may be logging on for first time
     admin_data['expt_phase'] = expt_phase;
     
     // gather data into one big JSON structure
     if (expt_phase == 'rating') {
-        // gather narratives and put them in admin/narratives
+        // we are switching from writing phase to rating phase
+        // therefore gather narratives and put them in admin/narratives
         var all_narratives = [];
-        var field;
-        for (field in shared_data) {
-            if (field != 'admin') {
-                // Field refers to a participant---get their data
-                ptpt_data = JSON.parse(shared_data[field]);
+        var id;
+        for (id in shared_data) {
+            if (id != 'admin') {
+                // Get "scratch" field, which contains jsPsych's data array
+                ptpt_data = JSON.parse(shared_data[id]['scratch']);
                 var narratives = parse_narrative_data(ptpt_data);
                 all_narratives = all_narratives.concat(narratives);
             }
@@ -62,7 +62,7 @@ function set_expt_phase(expt_phase) {
         admin_data['narratives'] = all_narratives;
     }
 
-    update_batch_data_retry('admin', admin_data);
+    update_batch_data_retry('/admin', admin_data);
 }
 
 function fill_info() {
@@ -89,7 +89,7 @@ function update_table() {
     for (id in data) {
         if (id != 'admin') {
             // Get data for current participant (null by default)
-            ptpt_data = JSON.parse(data[id]);
+            ptpt_data = JSON.parse(data[id]['scratch']);
             var row = tbody.insertRow();
             // Show participant
             row.insertCell(0).textContent = id;

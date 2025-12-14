@@ -1,13 +1,16 @@
 
-function update_batch_data_retry(field, data, next_fn) {
-	var json = JSON.stringify(data);
-	console.log('Updating ' + field + ' with ' + json);
+function update_batch_data_retry(field, data, stringify, next_fn) {
+	console.log('Updating ' + field + ' with ' + data);
+	if (stringify) {
+		console.log('(stringified)')
+		var data = JSON.stringify(data);
+	}
 	// Simple wrapper to try again if data update fails
-	jatos.batchSession.set(field, json,
+	jatos.batchSession.add(field, data,
 		next_fn, // on success
 		function(e) { // on fail, try again
 			setTimeout(
-				function() {update_batch_data_retry(field, data, next_fn)},
+				function() {update_batch_data_retry(field, data, stringify, next_fn)},
 				500); // after a short delay
 		}
 	);
@@ -15,16 +18,15 @@ function update_batch_data_retry(field, data, next_fn) {
 
 function get_batch_data(field) {
 	// simple wrapper, avoids call to JSON every time
-	var json = jatos.batchSession.get(field);
+	var json = jatos.batchSession.find(field);
 	var data = JSON.parse(json);
 	return data;
 }
 
 function get_expt_phase() {
 	var expt_phase;
-	var admin_json = jatos.batchSession.get('admin');
-	if (admin_json) {
-		var admin_data = JSON.parse(admin_json);
+	var admin_data = jatos.batchSession.get('admin');
+	if (admin_data) {
 		expt_phase = admin_data['expt_phase'];
 	} else {
 		expt_phase = 'none';
@@ -37,7 +39,8 @@ function send_update_from_ptpt() {
 		data: jsPsych.data.get(),
 		progress: jsPsych.getProgress()
 	}
-	update_batch_data_retry(id, to_send);
+	to_send = JSON.stringify(to_send)
+	update_batch_data_retry('/' + id + '/scratch', to_send);
 }
 
 function upload_results_retry(data, next_fn) {
@@ -68,6 +71,7 @@ function get_input_param(param_name) {
 	// Piority given to batchJsonInput
 	var out = jatos.studyJsonInput[param_name];
 	if (jatos.batchJsonInput[param_name]) {
+		// Overwrite
 		out = jatos.batchJsonInput[param_name];
 	}
 	return out;

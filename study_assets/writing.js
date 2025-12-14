@@ -21,11 +21,28 @@ jatos.onLoad(function() {
 function create_writing_task(perspectives) {
 	// create nested timeline (see https://www.jspsych.org/v7/overview/timeline/#nested-timelines)
 	var timeline = [];
+	// Query this participant's perspective?
+	console.log('hey');
+	if (get_input_param('query_participant_perspective')) {
+		perspective_query = {
+			type: jsPsychHtmlButtonResponse,
+			stimulus: get_input_param('query_participant_perspective_text') || 'Which perspective do you agree with?',
+			choices: perspectives,
+			on_finish: function(data) {
+				// Record this participant's perspective
+				update_batch_data_retry(
+					'/' + id + '/perspective',
+					perspectives[data['response']],
+					false); // don't stringify
+			}
+		}
+		timeline.push(perspective_query);
+	}
+	// Pre-writing + writing for each perspective:
 	var i;
 	for (i = 0; i < perspectives.length; i++) {
 		// Pre-writing question(s)
 		var pre_writing_timeline_input = get_input_param('pre_writing_timeline');
-		console.log(pre_writing_timeline_input)
 		if (pre_writing_timeline_input) {
 			var pre_writing_timeline = jatos_input_to_jspsych_trials(
 				pre_writing_timeline_input,

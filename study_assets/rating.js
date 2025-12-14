@@ -11,26 +11,55 @@ var jsPsych = initJsPsych({
 jatos.onLoad(function() {
     id = jatos.urlQueryParameters['id'];
     jsPsych.data.addProperties({batch: jatos.batchProperties.title, id: id, expt_phase: get_expt_phase()});
-    var narratives = get_narratives();
+    var narratives = allocate_narratives();
     var rating_task = create_rating_task(narratives);
     jsPsych.run(rating_task);
 });
 
-function get_narratives() {
-	var admin_data = get_batch_data('admin');
-	var all_narratives = admin_data['narratives'];
-	// Filter to remove own narratives
-	var others_narratives = [];
-	var i, cand_narr;
-	for (i = 0; i < all_narratives.length; i++) {
-		cand_narr = all_narratives[i];
-		if (cand_narr['writer'] != id) {
-			others_narratives.push(cand_narr);
+function allocate_narratives() {
+	shared_data = jatos.batchSession.getAll();
+	var all_narratives = shared_data['admin']['narratives'];
+	allocation_mode = get_input_param('rating_allocation_mode') || 'all-others';
+	if (allocation_mode == 'all') {
+		allocated_narratives = all_narratives;
+	} else if (allocation_mode == 'all-others') {
+		// Filter to remove own narratives
+		var allocated_narratives = [];
+		var i, cand_narr;
+		for (i = 0; i < all_narratives.length; i++) {
+			cand_narr = all_narratives[i];
+			if (cand_narr['writer'] != id) {
+				allocated_narratives.push(cand_narr);
+			}
+		}
+	} else if (allocation_mode == 'opponents') {
+		// Filter to remove narratives from other participants who agree
+		var own_perspective = shared_data[id]['perspective'];
+		var allocated_narratives = [];
+		var i, cand_narr;
+		for (i = 0; i < all_narratives.length; i++) {
+			cand_narr = all_narratives[i];
+			writers_perspective = shared_data[cand_narr['writer']]['perspective']
+			if (writers_perspective != own_perspective) {
+				allocated_narratives.push(cand_narr);
+			}
+		}
+	} else if (allocation_mode == 'allies') {
+		// Filter to remove narratives from other participants who agree
+		var own_perspective = shared_data[id]['perspective'];
+		var allocated_narratives = [];
+		var i, cand_narr;
+		for (i = 0; i < all_narratives.length; i++) {
+			cand_narr = all_narratives[i];
+			writers_perspective = shared_data[cand_narr['writer']]['perspective']
+			if (writers_perspective == own_perspective) {
+				allocated_narratives.push(cand_narr);
+			}
 		}
 	}
 	// Shuffle
-	others_narratives = jsPsych.randomization.shuffle(others_narratives);
-	return others_narratives;
+	allocated_narratives = jsPsych.randomization.shuffle(allocated_narratives);
+	return allocated_narratives;
 }
 
 function create_rating_task(narratives) {

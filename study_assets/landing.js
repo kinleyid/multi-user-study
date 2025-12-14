@@ -21,7 +21,14 @@ jatos.onLoad(function() {
 	    if (id == 'admin') {
 	    	jatos.startComponentByTitle('admin');
 	    } else {
-	    	update_batch_data_retry(id, null);
+	    	// initialize this participant's partition of the batch session data
+	    	update_batch_data_retry(
+	    		'/' + id,
+	    		{
+		    		'perspective': null, // For storing which perspective this participant agrees with
+		    		'scratch': null // For storing all other info temporarily
+		    	},
+		    	false); // don't stringify
 	    	// await update
 	    	jatos.onBatchSession(update);
 	    }
