@@ -1,0 +1,70 @@
+{
+  "perspectives": [
+    "FOR",
+    "AGAINST"
+  ],
+  "writing_prompt": "Please write for the <b>%PERS%</b> perspective",
+  "n_lines": 5,
+  "max_words": 150,
+  "display_wordcount": true,
+  "query_participant_perspective": true,
+  "rating_allocation_mode": "opponents",
+  "rating_timeline": [
+    {
+      "type": "vas",
+      "params": {
+        "stimulus": "<div style='margin-left: 10%; width: 80%'><p>Consider the following <b>%PERS%</b> narrative:</p><p style=\"border: 1px solid black; padding: 5px\">%NARR%</p><p>Do you agree with this?</p></div>",
+        "scale_width": 500,
+        "labels": [
+          "Not at all",
+          "Neutral",
+          "Completely"
+        ]
+      }
+    },
+    {
+      "type": "likert",
+      "params": {
+        "preamble": "<div style='margin-left: 10%; width: 80%'><p>Consider the following <b>%PERS%</b> narrative:</p><p style=\"border: 1px solid black; padding: 5px\">%NARR%</p></div>",
+        "scale_width": 500,
+        "questions": [
+          {
+            "prompt": "Do you agree with this?",
+            "labels": [
+              "Not at all",
+              "Mostly not",
+              "Neutral",
+              "Somewhat",
+              "Completely"
+            ]
+          },
+          {
+            "prompt": "Do you think this was written by someone who genuinely believes it?",
+            "labels": [
+              "No",
+              "Yes"
+            ]
+          },
+          {
+            "prompt": "Does this cover all the arguments for this perspective?",
+            "labels": [
+              "No",
+              "Yes"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "params": {
+        "questions": [
+          {
+            "prompt": "Please provide any further thoughts here",
+            "rows": 3
+          }
+        ]
+      }
+    }
+  ]
+}

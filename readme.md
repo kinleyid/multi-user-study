@@ -102,6 +102,7 @@ For example, the study input might be the following:
   "n_lines": 5,
   "max_words": 150,
   "display_wordcount": true,
+  "query_participant_perspective": true,
   "pre_writing_timeline": {
     "type": "vas",
     "params": {
@@ -132,6 +133,7 @@ For example, the study input might be the following:
       ]
     }
   },
+  "rating_allocation_mode": "opponents",
   "rating_timeline": [
     {
       "type": "vas",
