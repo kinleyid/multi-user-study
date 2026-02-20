@@ -39,8 +39,8 @@ function allocate_narratives() {
 		var i, cand_narr;
 		for (i = 0; i < all_narratives.length; i++) {
 			cand_narr = all_narratives[i];
-			writers_perspective = shared_data[cand_narr['writer']]['perspective']
-			if (writers_perspective != own_perspective) {
+			writer_perspective = shared_data[cand_narr['writer']]['perspective']
+			if (writer_perspective != own_perspective) {
 				allocated_narratives.push(cand_narr);
 			}
 		}
@@ -51,9 +51,42 @@ function allocate_narratives() {
 		var i, cand_narr;
 		for (i = 0; i < all_narratives.length; i++) {
 			cand_narr = all_narratives[i];
-			writers_perspective = shared_data[cand_narr['writer']]['perspective']
-			if (writers_perspective == own_perspective) {
+			writer_perspective = shared_data[cand_narr['writer']]['perspective']
+			if (writer_perspective == own_perspective) {
 				allocated_narratives.push(cand_narr);
+			}
+		}
+	} else if (allocation_mode == 'min-per-combo') {
+		// For each combination of narrative's expressed view and writer's held view,
+		// randomly select some minimum number to be rated
+		var allocated_narratives = [];
+		var min_per_combo = get_input_param('min_per_combo');
+		var perspectives = get_input_param('perspectives');
+		var i, j, k, narrative_perspective, writer_perspective;
+		for (i = 0; i < perspectives.length; i++) {
+			narrative_perspective = perspectives[i];
+			for (j = 0; j < perspectives.length; j++) {
+				writer_perspective = perspectives[j];
+				// Get candidate narratives
+				var candidate_narratives = [];
+				var narrative, writer;
+				for (k = 0; k < all_narratives.length; k++) {
+					narrative = all_narratives[k];
+					// Does this narrative express the right perspective for the current combo?
+					if (narrative['perspective'] == narrative_perspective) {
+						// Is the narrative's writer not the rater?
+						writer = narrative['writer'];
+						if (writer != id) {
+							// Is the writer's perspective right for the current combo?
+							if (shared_data[writer]['perspective'] == writer_perspective) {
+								candidate_narratives.push(narrative)
+							}
+						}
+					}
+				}
+				// Sample from candidate narratives
+				var sample = jsPsych.randomization.sampleWithoutReplacement(candidate_narratives, min_per_combo);
+				allocated_narratives = allocated_narratives.concat(sample);
 			}
 		}
 	}
