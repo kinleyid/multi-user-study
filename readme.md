@@ -86,6 +86,8 @@ Whether you are editing the "study input" or "batch input", you can use the same
     - `'opponents'`: everyone will rate the narratives of those who disagree with them; note that to use this option, `query_participant_perspective` must be set to `true`
     - `'allies'`: everyone will rate the narratives of those who agree with them; note that to use this option, `query_participant_perspective` must be set to `true`
     - `'all'`: everyone will rate everyone's narratives, *including their own*
+    - `'min-per-combo''`: everyone will rate some minimum number (set by `min_per_combo`, below) of narratives for each combination of perspective expressed in the narrative and perspective held by the writer (no rater rates their own narrative)
+- `min_per_combo`: the minimum number of narratives everyone rates for each combination of perspective expressed in the narrative and perspective held by the writer
 - `rating_timeline`: A set of questions asked to participants about the narratives of others. `"%PERS%"` will be replaced with the current perspective being rated and `"%NARR%"` will be replaced with the current narrative.
 
 ### Example
