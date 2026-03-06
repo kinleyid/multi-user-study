@@ -3,6 +3,8 @@ jatos.onLoad(function() {
     // create callback for when shared data is updated
     jatos.onBatchSession(update_admin_screen);
     // initialize "admin" field of shared data
+    // this field is used to store data that is not specific to any one participant
+    // for example, the current phase of the experiment or an array of all narratives
     var admin_json = jatos.batchSession.get('admin');
     if (admin_json == undefined) {
         // admin is logging on for first time
@@ -45,7 +47,6 @@ function set_expt_phase(expt_phase) {
     var admin_data = shared_data['admin'] || {}; // admin may be logging on for first time
     admin_data['expt_phase'] = expt_phase;
     
-    // gather data into one big JSON structure
     if (expt_phase == 'rating') {
         // we are switching from writing phase to rating phase
         // therefore gather narratives and put them in admin/narratives

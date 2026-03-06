@@ -50,6 +50,7 @@ function upload_results_retry(data, next_fn) {
 
 function parse_narrative_data(data) {
 	// go from jsPsych's data format (extensive, complex) to a simpler format
+	var shared_data = jatos.batchSession.getAll();
 	var parsed = [];
 	var trials = data['data']['trials'];
 	var i, trial;
@@ -58,8 +59,10 @@ function parse_narrative_data(data) {
 		if (trial['trial_type'] == 'survey-text') { // Identify actual writing trials vs ratings
 			parsed.push({
 				'writer': trial['id'],
-				'perspective': trial['perspective'],
-				'txt': trial.response['Q0']
+				'perspective': trial['narrative_perspective'],
+				'txt': trial.response['Q0'],
+				'id': trial['narrative_id'],
+				'writer_perspective': shared_data[trial['id']]['perspective']
 			});
 		}
 	}

@@ -22,7 +22,6 @@ function create_writing_task(perspectives) {
 	// create nested timeline (see https://www.jspsych.org/v7/overview/timeline/#nested-timelines)
 	var timeline = [];
 	// Query this participant's perspective?
-	console.log('hey');
 	if (get_input_param('query_participant_perspective')) {
 		perspective_query = {
 			type: jsPsychHtmlButtonResponse,
@@ -30,10 +29,12 @@ function create_writing_task(perspectives) {
 			choices: perspectives,
 			on_finish: function(data) {
 				// Record this participant's perspective
-				update_batch_data_retry(
+				var writer_perspective = perspectives[data['response']];
+				update_batch_data_retry( // In the batch session data
 					'/' + id + '/perspective',
-					perspectives[data['response']],
+					writer_perspective,
 					false); // don't stringify
+				jsPsych.data.addProperties({writer_perspective: writer_perspective}); // And in the CSV
 			}
 		}
 		timeline.push(perspective_query);
@@ -57,7 +58,10 @@ function create_writing_task(perspectives) {
 				prompt: get_input_param('writing_prompt').replace('%PERS%', perspectives[i]),
 				rows: get_input_param('n_lines') || 5
 			}],
-			data: {perspective: perspectives[i]},
+			data: {
+				narrative_perspective: perspectives[i],
+				narrative_id: id + '-' + perspectives[i]
+			},
 			on_start: send_update_from_ptpt,
 	    on_finish: send_update_from_ptpt,
 	    on_load: function() { // implement word limit
@@ -111,7 +115,6 @@ function create_writing_task(perspectives) {
 		timeline.push(writing_trial);
 		// Post-writing question(s)
 		var post_writing_timeline_input = get_input_param('post_writing_timeline');
-		console.log(post_writing_timeline_input)
 		if (post_writing_timeline_input) {
 			var post_writing_timeline = jatos_input_to_jspsych_trials(
 				post_writing_timeline_input,

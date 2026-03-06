@@ -17,9 +17,9 @@ jatos.onLoad(function() {
 });
 
 function allocate_narratives() {
-	shared_data = jatos.batchSession.getAll();
+	var shared_data = jatos.batchSession.getAll();
 	var all_narratives = shared_data['admin']['narratives'];
-	allocation_mode = get_input_param('rating_allocation_mode') || 'all-others';
+	var allocation_mode = get_input_param('rating_allocation_mode') || 'all-others';
 	if (allocation_mode == 'all') {
 		allocated_narratives = all_narratives;
 	} else if (allocation_mode == 'all-others') {
@@ -96,6 +96,7 @@ function allocate_narratives() {
 }
 
 function create_rating_task(narratives) {
+	var shared_data = jatos.batchSession.getAll();
 	var timeline = [];
 	var ni; // narrative idx
 	for (ni = 0; ni < narratives.length; ni++) {
@@ -112,7 +113,10 @@ function create_rating_task(narratives) {
 			// data:
 			{
 				'writer': narratives[ni]['writer'],
-				'perspective': narratives[ni]['perspective']
+				'narrative_perspective': narratives[ni]['perspective'],
+				'narrative_id': narratives[ni]['id'],
+				'writer_perspective': narratives[ni]['writer_perspective'],
+				'rater_perspective': shared_data[id]['perspective']
 			}
 		);
 		/*
